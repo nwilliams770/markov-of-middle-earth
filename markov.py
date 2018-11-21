@@ -35,7 +35,34 @@ def make_markov_model(data):
     return markov_model
 
 
+def generate_random_start(markov_model):
+    sentence_starter = markov_model["START"].return_weighted_rand_word()
+    return sentence_starter
 
+def generate_n_length_sentence(length, markov_model):
+    current_word = generate_random_start(markov_model)
+    sentence = [current_word]
+    for i in range(0, length):
+        current_frequencygram = markov_model[current_word]
+        next_word = current_frequencygram.return_weighted_rand_word()
+        current_word = next_word
+        sentence.append(current_word)
+    sentence[0].captalize()
+    return " ".join(sentence).replace("END", "")
+
+def generate_n_sentences(length, markov_model):
+    current_word = generate_random_start(markov_model)
+    sentences = [[] for i in range(10)]
+    sentences[0].append(current_word)
+    for i in range(0, length):
+        while True:
+            current_frequencygram = markov_model[current_word]
+            next_word = current_frequencygram.return_weighted_rand_word()
+            if next_word == "END":
+                break
+            current_word = next_word
+            sentences[i].append(current_word)
+        current_word = sentences[i][-1]
 
 def get_data(path):
     with open(path) as file:
@@ -76,12 +103,4 @@ def split_into_sentences(text):
     return sentences
 
 test = get_data("./fellowship_of_the_ring.txt")
-
-
-test2 = split_into_sentences(test)
-
-test3 = [ re.findall(r"[\w]+|[^\s\w]", sentence) for sentence in test2 ]
-
-
-print(test3)
 
