@@ -12,14 +12,15 @@ class FrequencyGram(dict):
             self.update(iterable)
     
     def update(self, iterable):
-        for item in iterable:
-            if item in self:
-                self[item] += 1
-                self.tokens += 1
-            else:
-                self[item] = 1
-                self.tokens += 1
-                self.types += 1
+        # We're only passing single-word strings so no need to iterate
+        # for item in iterable:
+        if iterable in self:
+            self[iterable] += 1
+            self.tokens += 1
+        else:
+            self[iterable] = 1
+            self.tokens += 1
+            self.types += 1
     
     def count(self, item):
         if item in self:
