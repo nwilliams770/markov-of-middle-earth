@@ -1,6 +1,13 @@
 from histogram import FrequencyGram
 import re
 
+# TO-DO:
+## - generate_random_start
+##- generate_n_length_sentence
+## data parser:
+    # we probably want to remove all quotes, single and double
+    # - reads line by line, putting all 
+
 ALPHABETS= "([A-Za-z])"
 PREFIXES = "(Mr|St|Mrs|Ms|Dr)[.]"
 SUFFIXES = "(Inc|Ltd|Jr|Sr|Co)"
@@ -12,14 +19,22 @@ def make_markov_model(data):
     markov_model = dict()
 
     for sentence in data:
+        if "START" in markov_model and "END" in markov_model:
+            markov_model["START"].update(sentence[0])
+            markov_model["END"].update(sentence[-1])
+        else:
+            markov_model["START"] = FrequencyGram(sentence[0])
+            markov_model["END"] = FrequencyGram(sentence[-1])
         for i in range(0, len(sentence)-1):
-            if data[i] in markov_model:
+            if sentence[i] in markov_model:
                 # Note, we might need to update this or the .update func
                 # depending how we want it to parse the data
-                markov_model[data[i]].update(data[i+1])
+                markov_model[sentence[i]].update(sentence[i+1])
             else:
-                markov_model[data[i]] = FrequencyGram(data[i+1])
+                markov_model[sentence[i]] = FrequencyGram(sentence[i+1])
     return markov_model
+
+
 
 
 def get_data(path):
@@ -27,12 +42,6 @@ def get_data(path):
         data = file.read()
     file.close()
     return data
-
-
-
-
-
-
 
 # D Greenburg // split_into_sentences
 # https://stackoverflow.com/questions/4576077/python-split-text-on-sentences
@@ -76,11 +85,3 @@ test3 = [ re.findall(r"[\w]+|[^\s\w]", sentence) for sentence in test2 ]
 
 print(test3)
 
-
-# print(test2)
-# TO-DO:
-## - generate_random_start
-##- generate_n_length_sentence
-## data parser:
-    # we probably want to remove all quotes, single and double
-    # - reads line by line, putting all 
