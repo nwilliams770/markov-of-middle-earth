@@ -1,9 +1,7 @@
-## TRAINING:
-# Instantiate some sort of dict or dict-like data structure
-# Iterate over corpus, keeping count of unique words, total words, and adding words as keys and frequencies as values
 from random import randint, choices
 
 class FrequencyGram(dict):
+    """ dict-like object for storing a probability distribution for a specific state """
     # Probably better practice to inherit from MutableMapping but then we'd have to rewrite all 5 of those methods
     # Could we also just have a property like self.dict and access it that way?
     def __init__(self, iterable=None):
