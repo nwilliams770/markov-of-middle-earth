@@ -5,11 +5,11 @@
 from random import randint
 from random import choices
 
-class Dictogram(dict):
+class FrequencyGram(dict):
     # Probably better practice to inherit from MutableMapping but then we'd have to rewrite all 5 of those methods
     # Could we also just have a property like self.dict and access it that way?
     def __init__(self, iterable=None):
-        super(Dictogram, self)
+        super(FrequencyGram, self)
         self.tokens = 0 # total for specific window, not entire model
         self.types = 0 # total for specific window, not entire model
         if iterable:
@@ -44,19 +44,3 @@ class Dictogram(dict):
         for occurence in occurences:
                 distribution.append(occurence / total)
         return distribution
-
-
-
-
-
-tony = Dictogram(["hello", "how", "are", "you", "hello"])
-
-
-print(tony.return_weighted_rand_word())
-
-
-# print("************************************")
-
-# print(tony)
-
-# print("************************************")
