@@ -32,7 +32,7 @@ class FrequencyGram(dict):
 
     def return_weighted_rand_word(self):    
         weights = self.create_probability_distribution()
-        return choices(list(self.keys()), weights)
+        return choices(list(self.keys()), weights)[0]
 
     def create_probability_distribution(self):
         occurences = self.values()
