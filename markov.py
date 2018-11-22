@@ -1,19 +1,5 @@
 from histogram import FrequencyGram
 import re
-import pprint
-
-
-# TO-DO:
-## FIX GENERATING SENTENCES:
-    # need to capitalize first word, 
-    # also, how to deal without spacing punctuation
-## push up
-## write readme
-
-## - generate_random_start
-##- generate_n_length_sentence
-## data parser:
-## 
 
 ALPHABETS= "([A-Za-z])"
 PREFIXES = "(Mr|St|Mrs|Ms|Dr)[.]"
@@ -26,10 +12,7 @@ PUNCS = ",'.?!:;"
 def make_markov_model(corpus):
     markov_model = dict()
     corpus_size = 0
-    # print(corpus)
     for sentence in corpus:
-        # current_sentence = [word.lower() for word in sentence] # lowercase all words
-        # print(current_sentence)
         if "START" in markov_model:
             markov_model["START"].update(sentence[0])
         else:
@@ -60,16 +43,12 @@ def load_data(file_path):
             corpus = []
             raw_data = get_data(path)
             corpus += split_into_sentences(raw_data)
-            
-
         markov_model = make_markov_model(corpus)
     else:
         raw_data = get_data(file_path)
         corpus = split_into_sentences(raw_data)
         markov_model = make_markov_model(corpus)
-        # print(raw_data)
     return markov_model
-
 
 def generate_random_start(markov_model):
     sentence_starter = markov_model["START"].return_weighted_rand_word()
@@ -101,10 +80,8 @@ def format_text(sentence_list):
 
 def generate_n_sentences(length, markov_model):
     current_word = generate_random_start(markov_model)
-
     sentences = []
     sentences.append(current_word)
-
     for i in range(0, length):
         while True:
             current_frequencygram = markov_model[current_word]
@@ -118,24 +95,6 @@ def generate_n_sentences(length, markov_model):
                 sentences[i] += current_word
             sentences[i].capitalize()
     return " ".join(sentences)
-
-    # sentences = [[] for i in range(length)]
-    # sentences[0].append(current_word)
-    # for i in range(0, length):
-    #     while True:
-    #         current_frequencygram = markov_model[current_word]
-    #         next_word = current_frequencygram.return_weighted_rand_word()
-    #         if next_word == "END":
-    #             break
-    #         current_word = next_word
-    #         sentences[i].append(current_word)
-    #     if i > 0:
-    #         current_word = sentences[i - 1][-1]
-    # result = ""
-    # for sentence in sentences:
-    #     result += " ".join(sentence)
-    #     result[0].upper()
-    # return result
 
 def get_data(path):
     with open(path) as file:
@@ -175,19 +134,13 @@ def split_into_sentences(text):
     # sentences = [ re.findall(r"[\w]+|[^\s\w]", sentence) for sentence in text ]
     for i in range(0, len(sentences)):
         sentences[i] = re.findall(r"[\w']+|[.,!?;]", sentences[i])
-    # pprint.pprint(sentences)
     return sentences
 
 training_set_1 = ["./fellowship_of_the_ring.txt", "./two_towers.txt", "./return_of_the_king.txt"]
 training_set_2 = "./fellowship_of_the_ring.txt"
-# model_1 = load_data(training_set_1)
 model_2 = load_data(training_set_2)
 
 # test = generate_n_length_sentence(30, model_1)
 # test = generate_n_sentences(3, model_1)
 test2 = generate_n_length_sentence(30, model_2)
 print(test2)
-# print(test2)
-# pprint.pprint(model_1)
-
-
