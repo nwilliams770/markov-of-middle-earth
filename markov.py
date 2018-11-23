@@ -64,7 +64,6 @@ def generate_n_length_sentence(length, markov_model):
         if current_word == "START" or current_word == "END":
             continue
         sentence.append(current_word)
-    print(sentence)
     return format_text(sentence)
 
 def format_text(sentence_list):
@@ -79,10 +78,10 @@ def format_text(sentence_list):
     return formatted
 
 def generate_n_sentences(length, markov_model):
-    current_word = generate_random_start(markov_model)
-    sentences = []
-    sentences.append(current_word)
+    sentences = ["" for x in range(length)]
     for i in range(0, length):
+        current_word = generate_random_start(markov_model)
+        sentences[i] += (current_word)
         while True:
             current_frequencygram = markov_model[current_word]
             next_word = current_frequencygram.return_weighted_rand_word()
@@ -93,7 +92,6 @@ def generate_n_sentences(length, markov_model):
                 sentences[i] += " " + current_word
             else:
                 sentences[i] += current_word
-            sentences[i].capitalize()
     return " ".join(sentences)
 
 def get_data(path):
@@ -141,6 +139,6 @@ training_set_2 = "./fellowship_of_the_ring.txt"
 model_2 = load_data(training_set_2)
 
 # test = generate_n_length_sentence(30, model_1)
-# test = generate_n_sentences(3, model_1)
+test = generate_n_sentences(5, model_2)
 test2 = generate_n_length_sentence(30, model_2)
-print(test2)
+print(test)
