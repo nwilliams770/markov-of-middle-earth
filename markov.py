@@ -1,5 +1,8 @@
 from histogram import FrequencyGram
 import re
+import sys
+import json
+import os.path
 
 ALPHABETS= "([A-Za-z])"
 PREFIXES = "(Mr|St|Mrs|Ms|Dr)[.]"
@@ -8,6 +11,43 @@ STARTERS = "(Mr|Mrs|Ms|Dr|He\s|She\s|It\s|They\s|Their\s|Our\s|We\s|But\s|Howeve
 ACRONYMS = "([A-Z][.][A-Z][.](?:[A-Z][.])?)"
 WEBSITES = "[.](com|net|org|io|gov)"
 PUNCS = ",'.?!:;"
+
+MODEL_NAME = "model.json"
+TRAINING_DATA = ["./training_data/fellowship_of_the_ring.txt", "./training_data/two_towers.txt", "./training_data/return_of_the_king.txt"]
+
+# def main():
+# ## read args, determine if valid (sentence 30 // sentences 3)
+# ## we probably want to do some kind of checking and saving of our model so we're not uncessarily training,
+# ## check if file exists, if not, training, if so, use that instead
+# ## print sentences, return true
+#     if valid_args(sys.argv):
+#         if not existing_model():
+#             make_markov_model
+#         ## case statement
+#         make sentences()
+
+#         make n length sentence()
+
+    
+
+def valid_args(args):
+    if args.length > 2:
+        if args[0] == "sentence" or args[0] == "sentences":
+            if isinstance(args[1], int) and args[1] > 0:
+                return true
+    return false
+
+def existing_model():
+    return os.path.isfile(MODEL_NAME)
+
+def save_model(markov_model):
+    with open('model.json', 'w') as f:
+        json.dump(data, f, indent=4)
+
+def load_model():
+    with open('model.json', 'r') as f:
+        model = json.load(f)
+    return model
 
 def make_markov_model(corpus):
     markov_model = dict()
@@ -33,7 +73,8 @@ def make_markov_model(corpus):
 
     markov_model["END"] = FrequencyGram("START") ## Since we're adding in START/END has we iterate instead of having it in the raw data,
                                                  ## we have to manually add a FrequencyGram at key END to ensure our sentences flow
-    print(f"Corpus: {corpus_size} words (punctuation included)")
+    print("Corpus: {0} words".format(corpus_size))
+    print(markov_model)
     return markov_model
 
 def load_data(file_path):
@@ -49,6 +90,8 @@ def load_data(file_path):
         corpus = split_into_sentences(raw_data)
         markov_model = make_markov_model(corpus)
     return markov_model
+    ## here is where we can save the model
+
 
 def generate_random_start(markov_model):
     sentence_starter = markov_model["START"].return_weighted_rand_word()
@@ -135,7 +178,7 @@ def split_into_sentences(text):
     return sentences
 
 training_set_1 = ["./fellowship_of_the_ring.txt", "./two_towers.txt", "./return_of_the_king.txt"]
-training_set_2 = "./fellowship_of_the_ring.txt"
+training_set_2 = "./training_data/fellowship_of_the_ring.txt"
 model_2 = load_data(training_set_2)
 
 # test = generate_n_length_sentence(30, model_1)
