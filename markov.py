@@ -4,45 +4,52 @@ import sys
 import json
 import os.path
 
-ALPHABETS= "([A-Za-z])"
-PREFIXES = "(Mr|St|Mrs|Ms|Dr)[.]"
-SUFFIXES = "(Inc|Ltd|Jr|Sr|Co)"
-STARTERS = "(Mr|Mrs|Ms|Dr|He\s|She\s|It\s|They\s|Their\s|Our\s|We\s|But\s|However\s|That\s|This\s|Wherever)"
-ACRONYMS = "([A-Z][.][A-Z][.](?:[A-Z][.])?)"
-WEBSITES = "[.](com|net|org|io|gov)"
-PUNCS = ",'.?!:;"
 
-MODEL_NAME = "model.json"
-TRAINING_DATA = ["./training_data/fellowship_of_the_ring.txt", "./training_data/two_towers.txt", "./training_data/return_of_the_king.txt"]
+## MAIN TO DO:
+    ## COMMAND LINE ARGS are str
+    ## how can we verify that the second arg is an int?
+    ## can we do some kind of ASCII logic like we would do in C? 
 
-# def main():
-# ## read args, determine if valid (sentence 30 // sentences 3)
-# ## we probably want to do some kind of checking and saving of our model so we're not uncessarily training,
-# ## check if file exists, if not, training, if so, use that instead
-# ## print sentences, return true
-#     if valid_args(sys.argv):
-#         if not existing_model():
-#             make_markov_model
-#         ## case statement
-#         make sentences()
 
-#         make n length sentence()
-
-    
+def main():
+## read args, determine if valid (sentence 30 // sentences 3)
+## we probably want to do some kind of checking and saving of our model so we're not uncessarily training,
+## check if file exists, if not, training, if so, use that instead
+## print sentences, return true
+    if valid_args(sys.argv):
+        if not existing_model():
+            model = load_data(TRAINING_DATA)
+        else:
+            model = load_model()
+        OPTIONS[sys.argv[1]](sys.argv[2], model)
+        return True
+    else:
+        print_usage()
+        return False
 
 def valid_args(args):
-    if args.length > 2:
-        if args[0] == "sentence" or args[0] == "sentences":
-            if isinstance(args[1], int) and args[1] > 0:
-                return true
-    return false
+    print(len(args))
+    print(args[1])
+    print(isinstance(args[2], str))
+    ## FILE_NAME <sentence(s)> <int>
+    if len(args) > 3:
+        if args[1] == "sentence" or args[1] == "sentences":
+            if isinstance(args[2], int) and args[2] > 0:
+                return True
+    return False
+
+def print_usage():
+    print("Usage:")
+    print("    sentence <int>  | sentence of <int> length")
+    print("    sentences <int> | <int> # of sentences")
 
 def existing_model():
     return os.path.isfile(MODEL_NAME)
 
 def save_model(markov_model):
     with open('model.json', 'w') as f:
-        json.dump(data, f, indent=4)
+        json.dump(markov_model, f, indent=4)
+    return True
 
 def load_model():
     with open('model.json', 'r') as f:
@@ -74,7 +81,10 @@ def make_markov_model(corpus):
     markov_model["END"] = FrequencyGram("START") ## Since we're adding in START/END has we iterate instead of having it in the raw data,
                                                  ## we have to manually add a FrequencyGram at key END to ensure our sentences flow
     print("Corpus: {0} words".format(corpus_size))
-    print(markov_model)
+    if save_model(markov_model):
+        print("Model saved!")
+    else:
+        print("An error occurred saving your model")
     return markov_model
 
 def load_data(file_path):
@@ -177,11 +187,28 @@ def split_into_sentences(text):
         sentences[i] = re.findall(r"[\w']+|[.,!?;]", sentences[i])
     return sentences
 
-training_set_1 = ["./fellowship_of_the_ring.txt", "./two_towers.txt", "./return_of_the_king.txt"]
-training_set_2 = "./training_data/fellowship_of_the_ring.txt"
-model_2 = load_data(training_set_2)
+# training_set_1 = ["./fellowship_of_the_ring.txt", "./two_towers.txt", "./return_of_the_king.txt"]
+# training_set_2 = "./training_data/fellowship_of_the_ring.txt"
+# model_2 = load_data(training_set_2)
 
-# test = generate_n_length_sentence(30, model_1)
-test = generate_n_sentences(5, model_2)
-test2 = generate_n_length_sentence(30, model_2)
-print(test)
+# # test = generate_n_length_sentence(30, model_1)
+# test = generate_n_sentences(5, model_2)
+# test2 = generate_n_length_sentence(30, model_2)
+# print(test)
+
+if __name__ == "__main__":
+    main()
+
+
+ALPHABETS= "([A-Za-z])"
+PREFIXES = "(Mr|St|Mrs|Ms|Dr)[.]"
+SUFFIXES = "(Inc|Ltd|Jr|Sr|Co)"
+STARTERS = "(Mr|Mrs|Ms|Dr|He\s|She\s|It\s|They\s|Their\s|Our\s|We\s|But\s|However\s|That\s|This\s|Wherever)"
+ACRONYMS = "([A-Z][.][A-Z][.](?:[A-Z][.])?)"
+WEBSITES = "[.](com|net|org|io|gov)"
+PUNCS = ",'.?!:;"
+
+MODEL_NAME = "model.json"
+TRAINING_DATA = ["./training_data/fellowship_of_the_ring.txt", "./training_data/two_towers.txt", "./training_data/return_of_the_king.txt"]
+OPTIONS = { "sentence": generate_n_length_sentence,
+            "sentences": generate_n_sentences }
