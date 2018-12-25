@@ -1,42 +1,56 @@
 from histogram import FrequencyGram
-import re
 import sys
-import json
 import os.path
+import pickle
+import re
+import json
 
+ALPHABETS= "([A-Za-z])"
+PREFIXES = "(Mr|St|Mrs|Ms|Dr)[.]"
+SUFFIXES = "(Inc|Ltd|Jr|Sr|Co)"
+STARTERS = "(Mr|Mrs|Ms|Dr|He\s|She\s|It\s|They\s|Their\s|Our\s|We\s|But\s|However\s|That\s|This\s|Wherever)"
+ACRONYMS = "([A-Z][.][A-Z][.](?:[A-Z][.])?)"
+WEBSITES = "[.](com|net|org|io|gov)"
+PUNCS = ",'.?!:;"
 
-## MAIN TO DO:
-    ## COMMAND LINE ARGS are str
-    ## how can we verify that the second arg is an int?
-    ## can we do some kind of ASCII logic like we would do in C? 
-
+MODEL_NAME = "model.pkl"
+TRAINING_DATA = ["./training_data/fellowship_of_the_ring.txt", "./training_data/two_towers.txt", "./training_data/return_of_the_king.txt"]
 
 def main():
-## read args, determine if valid (sentence 30 // sentences 3)
-## we probably want to do some kind of checking and saving of our model so we're not uncessarily training,
-## check if file exists, if not, training, if so, use that instead
-## print sentences, return true
     if valid_args(sys.argv):
         if not existing_model():
             model = load_data(TRAINING_DATA)
+            length = int(sys.argv[2])
+            result = OPTIONS[sys.argv[1]](length, model)
+            print(result)
+            return True
         else:
             model = load_model()
-        OPTIONS[sys.argv[1]](sys.argv[2], model)
-        return True
+            length = int(sys.argv[2])
+            result = OPTIONS[sys.argv[1]](length, model)
+            print(result)
+            return True
     else:
         print_usage()
-        return False
 
 def valid_args(args):
-    print(len(args))
-    print(args[1])
-    print(isinstance(args[2], str))
-    ## FILE_NAME <sentence(s)> <int>
-    if len(args) > 3:
+    ## Expected Input: FILE_NAME <sentence(s)> <int>
+    if len(args) == 3:
         if args[1] == "sentence" or args[1] == "sentences":
-            if isinstance(args[2], int) and args[2] > 0:
+            if is_positive_int(args[2]):
                 return True
     return False
+
+def is_positive_int(str):
+    try:
+        length = int(str)
+        if length > 0:
+            return True
+        else:
+            return False
+            print("Must provide a positive integer!")
+    except:
+        return False
 
 def print_usage():
     print("Usage:")
@@ -47,13 +61,16 @@ def existing_model():
     return os.path.isfile(MODEL_NAME)
 
 def save_model(markov_model):
+    with open('model.pkl', 'wb') as f:
+        pickle.dump(markov_model, f, pickle.HIGHEST_PROTOCOL)
     with open('model.json', 'w') as f:
         json.dump(markov_model, f, indent=4)
     return True
 
 def load_model():
-    with open('model.json', 'r') as f:
-        model = json.load(f)
+    with open('model.pkl', 'rb') as f:
+        model = pickle.load(f)
+    print("Model loaded!")
     return model
 
 def make_markov_model(corpus):
@@ -65,14 +82,13 @@ def make_markov_model(corpus):
         else:
             markov_model["START"] = FrequencyGram(sentence[0])
 
-        if sentence[-1] in markov_model: #have to make it manually point to END
+        if sentence[-1] in markov_model: # last word/char always points to "END"
                 markov_model[sentence[-1]].update("END")
         else:
             markov_model[sentence[-1]] = FrequencyGram("END")
+
         corpus_size += len(sentence)
-        for i in range(0, len(sentence)-1): ## minus two because all sentence terminators point to END
-                # Note, we might need to update this or the .update func
-                # depending how we want it to parse the data
+        for i in range(0, len(sentence)-1): ## skipping last word because we already added it in prev block
             if sentence[i] in markov_model:
                 markov_model[sentence[i]].update(sentence[i+1])
             else:
@@ -187,28 +203,8 @@ def split_into_sentences(text):
         sentences[i] = re.findall(r"[\w']+|[.,!?;]", sentences[i])
     return sentences
 
-# training_set_1 = ["./fellowship_of_the_ring.txt", "./two_towers.txt", "./return_of_the_king.txt"]
-# training_set_2 = "./training_data/fellowship_of_the_ring.txt"
-# model_2 = load_data(training_set_2)
-
-# # test = generate_n_length_sentence(30, model_1)
-# test = generate_n_sentences(5, model_2)
-# test2 = generate_n_length_sentence(30, model_2)
-# print(test)
+OPTIONS = { "sentence": generate_n_length_sentence,
+            "sentences": generate_n_sentences }
 
 if __name__ == "__main__":
     main()
-
-
-ALPHABETS= "([A-Za-z])"
-PREFIXES = "(Mr|St|Mrs|Ms|Dr)[.]"
-SUFFIXES = "(Inc|Ltd|Jr|Sr|Co)"
-STARTERS = "(Mr|Mrs|Ms|Dr|He\s|She\s|It\s|They\s|Their\s|Our\s|We\s|But\s|However\s|That\s|This\s|Wherever)"
-ACRONYMS = "([A-Z][.][A-Z][.](?:[A-Z][.])?)"
-WEBSITES = "[.](com|net|org|io|gov)"
-PUNCS = ",'.?!:;"
-
-MODEL_NAME = "model.json"
-TRAINING_DATA = ["./training_data/fellowship_of_the_ring.txt", "./training_data/two_towers.txt", "./training_data/return_of_the_king.txt"]
-OPTIONS = { "sentence": generate_n_length_sentence,
-            "sentences": generate_n_sentences }

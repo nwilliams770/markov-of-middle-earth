@@ -1,3 +1,6 @@
+# Ignore env and temp files
 env
 .vscode
 __pycache__
+*.pyc
+.DS_STORE
