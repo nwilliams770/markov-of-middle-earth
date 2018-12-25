@@ -1,5 +1,10 @@
+![Lord of the Markov]("https://github.com/nwilliams770/markov-of-middle-earth/blob/master/static/header.png")
 # Markov of Middle-Earth
-A Markov chain implementation, trained on J. R. R. Tolkien's Lord of the Rings trilogy. 
+A Markov chain implementation, trained on J. R. R. Tolkien's Lord of the Rings trilogy.
+
+## Usage
+    (python markov.py) sentence <int>  | sentence of <int> length
+    (python markov.py) sentences <int> | <int> # of sentences
 
 ## Features & Technologies
 - Trains a reusable model on any `.txt` corpus
@@ -34,8 +39,3 @@ A Markov chain implementation, trained on J. R. R. Tolkien's Lord of the Rings t
 
 ## Examples
 - Below are some of the best examples generated so far. The model tends to struggle with generating clear dialogue blocks but some of the smaller sentences were impressive!
-
-
-    print("Usage:")
-    print("    sentence <int>  | sentence of <int> length")
-    print("    sentences <int> | <int> # of sentences")
