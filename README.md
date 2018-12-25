@@ -1,4 +1,4 @@
-![Lord of the Markov]("https://github.com/nwilliams770/markov-of-middle-earth/blob/master/static/header.png")
+![Lord of the Markov](https://github.com/nwilliams770/markov-of-middle-earth/blob/master/static/header.png "Lord of The Markov")
 # Markov of Middle-Earth
 A Markov chain implementation, trained on J. R. R. Tolkien's Lord of the Rings trilogy.
 
@@ -39,3 +39,4 @@ A Markov chain implementation, trained on J. R. R. Tolkien's Lord of the Rings t
 
 ## Examples
 - Below are some of the best examples generated so far. The model tends to struggle with generating clear dialogue blocks but some of the smaller sentences were impressive!
+![Lord of the Markov Examples](https://github.com/nwilliams770/markov-of-middle-earth/blob/master/static/examples.png "Lord of The Markov")
